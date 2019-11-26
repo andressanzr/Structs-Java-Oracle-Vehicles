@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="lib" path="src/odbc-8/ojdbc8.jar"/>
+	<classpathentry kind="lib" path="src/odbc-8/ons.jar"/>
+	<classpathentry kind="lib" path="src/odbc-8/oraclepki.jar"/>
+	<classpathentry kind="lib" path="src/odbc-8/orai18n.jar"/>
+	<classpathentry kind="lib" path="src/odbc-8/osdt_cert.jar"/>
+	<classpathentry kind="lib" path="src/odbc-8/osdt_core.jar"/>
+	<classpathentry kind="lib" path="src/odbc-8/simplefan.jar"/>
+	<classpathentry kind="lib" path="src/odbc-8/ucp.jar"/>
+	<classpathentry kind="lib" path="src/odbc-8/xdb6.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
