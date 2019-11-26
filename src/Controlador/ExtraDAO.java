@@ -24,7 +24,13 @@ public class ExtraDAO {
 			Connection con = null;
 			Statement stm = null;
 			ResultSet rs = null;
-
+			
+			String sql = "SELECT * FROM Extras";
+			
+			con= DBConnect.conectarBD();
+			stm = con.createStatement();
+			rs=stm.executeQuery(sql);
+			
 			while(rs.next()){
 				Struct extraStruct = ((Struct)rs.getObject(1));
 				Object [] extraAttr = extraStruct.getAttributes();

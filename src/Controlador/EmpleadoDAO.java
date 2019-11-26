@@ -32,7 +32,8 @@ public class EmpleadoDAO {
 			rs = stm.executeQuery(sql);
 			
 			while(rs.next()){
-				Struct empleadoStruct = (Struct) rs.getObject(2);
+				
+				Struct empleadoStruct = (Struct) rs.getObject(1);
 				String nombreUsuario = empleadoStruct.getAttributes()[0].toString();	
 				String passUsuario = empleadoStruct.getAttributes()[1].toString();
 				

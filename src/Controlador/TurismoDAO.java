@@ -118,7 +118,8 @@ public class TurismoDAO {
 		HashMap<String, Turismo> listaTurismos = new HashMap<String, Turismo>();
 		try {
 			HashMap<Integer, Extra> listaExtras = new HashMap<Integer, Extra>();
-			
+			Extra extraBuscar = new Extra();
+			Extra extraTurismo =null;
 			Connection con =null;
 			Statement stm = null;
 			ResultSet rs = null;
@@ -129,13 +130,13 @@ public class TurismoDAO {
 			stm = con.createStatement();
 			
 			rs = stm.executeQuery(sql);
-			
-			ExtraDAO extradao = new ExtraDAO();
-			listaExtras = extradao.leerTodosExtras();
 
 			while(rs.next()){
-				Struct vehiStruct = (Struct) rs.getObject(2);
-				Object [] vehiAttr = vehiStruct.getAttributes();
+				Struct turisStruct = (Struct) rs.getObject(1);
+				
+				Object [] turisAttr = turisStruct.getAttributes();
+				
+				Object [] vehiAttr = ((Struct)turisAttr[0]).getAttributes();
 				
 				String matricula= vehiAttr[0].toString();
 				String marca= vehiAttr[1].toString();
@@ -143,22 +144,27 @@ public class TurismoDAO {
 				String color= vehiAttr[3].toString();
 				double precio = Double.parseDouble(vehiAttr[4].toString());
 				
+				int numPuertas = Integer.parseInt(turisAttr[1].toString());
+				
+				if(rs.getInt(2) != 0) {
+					int idExtra = rs.getInt(2);
+					
+					extraTurismo = extraBuscar.buscarExtra(idExtra);
+					
+				}else {
+					extraTurismo = extraBuscar.buscarExtra(1);
+				}
+				
+				Turismo turismoAdd = new Turismo(matricula, marca, modelo, color, precio, numPuertas, extraTurismo);
+				
+				listaTurismos.put(turismoAdd.getMatricula(), turismoAdd);
 				
 			}
+				
 			
-				int extra = in.nextInt();
-				Extra extraTurismo = null;
-				if (listaExtras.containsKey(extra)) {
-					extraTurismo = listaExtras.get(extra);
-				} else {
-					extraTurismo = listaExtras.get(0);
-				}
-				Turismo turismoC = new Turismo(Matricula, Marca, Modelo, Color, Precio, numPuertas, extraTurismo);
-				listaTurismos.put(Matricula, turismoC);
-			} while (in.hasNext());
-			in.close();
+			
 		} catch (SQLException e) {
-			System.err.println("Fichero no encontrado");
+			System.err.println("Error TursimoDAO leerTodosTurismos");
 		}
 
 		return listaTurismos;

@@ -16,7 +16,7 @@ import Modelo.Turismo;
 class Principal {
 	static Scanner in = new Scanner(System.in);
 	public static void main(String[] args) throws ClassNotFoundException, IOException {
-		
+			
 			// declaracion variables
 			String contrasena, usuario;
 			boolean loginCorrecto = false;
@@ -38,6 +38,7 @@ class Principal {
 			do {
 				// bucle login usuario
 				do {
+					
 					System.out.println("Introduzca su usuario:");
 					usuario = in.next();
 					System.out.println("Introduzca su contrasenna:");

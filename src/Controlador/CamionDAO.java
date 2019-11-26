@@ -38,9 +38,26 @@ public class CamionDAO {
 			System.out.println("Camion repetido");
 			return false;
 		} else {
-			System.out.println("Camion insertado");
+			
+			
+			String sql = "INSERT INTO Camiones VALUES (new Camion(new Vehiculo('"+camionAnnadir.getMatricula()+"', '"+camionAnnadir.getMarca()+"','"+camionAnnadir.getModelo()+"', '"+ camionAnnadir.getColor()+"', "+camionAnnadir.getPrecio() +"), "+camionAnnadir.getCapacidadCarga()+"))"; 
+			
+			try {
+				Connection con = DBConnect.conectarBD();
+				Statement stm = con.createStatement();
+				stm.execute(sql);
+				
+				boolean inserted = true;
+				if(inserted) {
+					System.out.println("Camion insertado");
+				}
+			} catch (SQLException e) {
+				System.err.println("Error CamionDAO annadirCamiones");
+				e.printStackTrace();
+			}
+			
 			listaCamiones.put(camionAnnadir.getMatricula(), camionAnnadir);
-			imprimirTodosCamiones(listaCamiones);
+			
 			return true;
 		}
 
@@ -49,7 +66,6 @@ public class CamionDAO {
 	public void annadirCamionesModificados(Camion camionAnnadir) {
 		HashMap<String, Camion> listaCamiones = leerTodosCamiones();
 		listaCamiones.put(camionAnnadir.getMatricula(), camionAnnadir);
-		imprimirTodosCamiones(listaCamiones);
 		System.out.println("Camion insertado");
 	}
 
@@ -72,31 +88,73 @@ public class CamionDAO {
 		HashMap<String, Camion> listaCamiones = leerTodosCamiones();
 		if (listaCamiones.containsKey(camionEliminar.getMatricula())) {
 			listaCamiones.remove(camionEliminar.getMatricula());
-			imprimirTodosCamiones(listaCamiones);
+			
+			Connection con =null;
+			Statement stm = null;
+			ResultSet rs = null;
+			String sql = "DELETE FROM Camiones c where c.cam.vehi.matricula='"+camionEliminar.getMatricula()+"'";
+			
+			try {
+				con = DBConnect.conectarBD();
+				stm = con.createStatement();
+				rs = stm.executeQuery(sql);
+				
+				while(rs.next()) {
+					System.out.println(rs.getString(1));
+				}
+			} catch (SQLException e) {
+				System.err.println("Error CamionDAO eliminarCamiones");
+				e.printStackTrace();
+			}
+			
+			
 			System.out.println("Camion eliminado");
 			return true;
 		} else {
 			System.out.println("El camion no existe");
 			return false;
 		}
-
 	}
 
 	public Camion buscarCamionLista(String matriculaCamionBuscar) {
 		HashMap<String, Camion> listaCamiones = leerTodosCamiones();
-		Camion camionEncontrado;
-		if (listaCamiones.containsKey(matriculaCamionBuscar)) {
-			camionEncontrado = listaCamiones.get(matriculaCamionBuscar);
-		} else {
+		Camion camionEncontrado = null;
+		Connection con =null;
+		Statement stm = null;
+		ResultSet rs = null;
+		String sql = "SELECT * FROM Camiones c where c.cam.vehi.matricula='"+matriculaCamionBuscar+"'";
+		
+		try {
+			con = DBConnect.conectarBD();
+			stm = con.createStatement();
+			rs = stm.executeQuery(sql);
+			
+			while(rs.next()) {
+				Struct camionStruct = (Struct) rs.getObject(1);
+				
+				Object[] camionAttr = camionStruct.getAttributes();
+				Object[] vehiAttr = ((Struct)camionAttr[1]).getAttributes();
+				
+				BigDecimal a = (BigDecimal) camionAttr[2];
+				int capacidadCarga = a.intValue();
+				
+				camionEncontrado = new Camion(vehiAttr[0].toString(), vehiAttr[1].toString(), vehiAttr[2].toString(), vehiAttr[3].toString(),Double.parseDouble(vehiAttr[4].toString()), capacidadCarga);
+			}
+		} catch (SQLException e) {
+			System.err.println("Error CamionDAO buscarCamionLista");
+			e.printStackTrace();
+		}
+		if(camionEncontrado==null) {
 			camionEncontrado = new Camion();
 			System.out.println("Camion no encontrado");
 		}
+		
 		return camionEncontrado;
 	}
 
 	public HashMap<String, Camion> leerTodosCamiones() {
 		Connection con = null;
-		OracleStatement stm = null;
+		Statement stm = null;
 		ResultSet rs = null;
 		String sql = "SELECT * FROM Camiones";
 
@@ -104,11 +162,11 @@ public class CamionDAO {
 
 		try {
 			con = DBConnect.conectarBD();
-			stm = (OracleStatement) con.createStatement();
-			rs = (OracleResultSet) stm.executeQuery(sql);
+			stm = con.createStatement();
+			rs =  stm.executeQuery(sql);
 
 			while (rs.next()) {
-				Struct camionStruct = (Struct) rs.getObject(2);
+				Struct camionStruct = (Struct) rs.getObject(1);
 
 				Object[] camionAttr = camionStruct.getAttributes();
 
@@ -128,47 +186,8 @@ public class CamionDAO {
 			e.printStackTrace();
 		}
 
-		/*
-		 * try { Scanner in = new Scanner(new FileReader("camiones.txt")); do {
-		 * in.next(); String Matricula = in.next(); in.next(); String Marca =
-		 * in.next(); in.next(); in.nextLine(); String Modelo = in.nextLine();
-		 * in.next(); String Color = in.next(); in.next(); double Precio =
-		 * in.nextDouble(); in.next(); int CapacidadCarga = in.nextInt(); Camion
-		 * miCamion = new Camion(Matricula, Marca, Modelo, Color, Precio,
-		 * CapacidadCarga); listaCamiones.put(Matricula, miCamion); } while
-		 * (in.hasNext()); in.close(); } catch (FileNotFoundException e) {
-		 * System.err.println("Fichero no encontrado"); }
-		 */
 		return listaCamiones;
 	}
 
-	public void imprimirTodosCamiones(HashMap<String, Camion> listaTodosCamiones) {
-		try {
-			PrintWriter out = new PrintWriter(new FileWriter("camiones.txt"));
-
-			for (Map.Entry<String, Camion> registro : listaTodosCamiones.entrySet()) {
-				out.println("Matricula");
-				out.println(registro.getValue().getMatricula());
-				out.println("Marca");
-				out.println(registro.getValue().getMarca());
-				out.println("Modelo");
-				out.println(registro.getValue().getModelo());
-				out.println("Color");
-				out.println(registro.getValue().getColor());
-				out.println("Precio");
-				String precio = registro.getValue().getPrecio() + "";
-				precio = precio.replace(".", ",");
-				out.println(precio);
-				out.println("CapacidadCarga");
-				out.println(registro.getValue().getCapacidadCarga());
-			}
-
-			out.close();
-
-		} catch (FileNotFoundException e1) {
-			System.err.println("Fichero camiones.txt no encontrado");
-		} catch (IOException e2) {
-			System.err.println("Error IO");
-		}
-	}
+	
 }

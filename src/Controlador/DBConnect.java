@@ -9,7 +9,7 @@ public class DBConnect {
 		Connection conexion = null;
 		
 		String user = "system";
-		String pass = "alumno";
+		String pass = "admin";
 		String url = "jdbc:oracle:thin:@localhost:1521:XE";
 		
 		try {
