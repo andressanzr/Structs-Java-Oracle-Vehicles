@@ -121,7 +121,6 @@ public class CamionDAO {
 				listaCamiones.put(camAnnadir.getMatricula(), camAnnadir);
 			}
 
-			rs.close();
 			stm.close();
 			con.close();
 		} catch (SQLException e) {

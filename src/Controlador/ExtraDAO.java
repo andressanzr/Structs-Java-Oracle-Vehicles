@@ -5,6 +5,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Struct;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -16,24 +21,30 @@ public class ExtraDAO {
 	public HashMap<Integer, Extra> leerTodosExtras() {
 		HashMap<Integer, Extra> listaExtras = new HashMap<Integer, Extra>();
 		try {
-			Scanner in = new Scanner(new FileReader("extras.txt"));
-			do {
-				in.next();
-				int Identificador = in.nextInt();
-				in.next();
-				in.nextLine();
-				String Descripcion = in.nextLine();
+			Connection con = null;
+			Statement stm = null;
+			ResultSet rs = null;
 
-				Extra miExtra = new Extra(Identificador, Descripcion);
-				listaExtras.put(Identificador, miExtra);
-
-			} while (in.hasNext());
-			in.close();
-		} catch (FileNotFoundException e) {
-			System.err.println("Fichero no encontrado");
+			while(rs.next()){
+				Struct extraStruct = ((Struct)rs.getObject(1));
+				Object [] extraAttr = extraStruct.getAttributes();
+				
+				int id =Integer.parseInt(extraAttr[0].toString());
+				String des = extraAttr[1].toString();
+				
+				Extra miExtra = new Extra(id, des);
+				
+				listaExtras.put(miExtra.getIdentificador(), miExtra);
+			}
+		stm.close();
+		con.close();
+		}catch (SQLException e) {
+			System.err.println("Error ExtraDAO SQL");
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
-		return listaExtras;
+	return listaExtras;
 	}
 
 	public void imprimirTodosExtras(HashMap<Integer, Extra> listaExtras) {
@@ -60,10 +71,10 @@ public class ExtraDAO {
 
 	public boolean annadirExtra(Extra extraAnnadir) {
 		HashMap<Integer, Extra> listaExtras = leerTodosExtras();
-		if(listaExtras.containsKey(extraAnnadir.getIdentificador())) {
+		if (listaExtras.containsKey(extraAnnadir.getIdentificador())) {
 			System.err.println("Idenficador repetido");
 			return false;
-		}else {
+		} else {
 			listaExtras.put(extraAnnadir.getIdentificador(), extraAnnadir);
 			imprimirTodosExtras(listaExtras);
 			System.out.println("Extra annadido correctamente");
@@ -75,21 +86,21 @@ public class ExtraDAO {
 	public Extra buscarExtra(int Identificador) {
 		HashMap<Integer, Extra> listaExtras = leerTodosExtras();
 		Extra extraEncontrado;
-		if(listaExtras.containsKey(Identificador)) {
-			return extraEncontrado= listaExtras.get(Identificador);
-		}else {
-			return extraEncontrado= listaExtras.get(0);
+		if (listaExtras.containsKey(Identificador)) {
+			return extraEncontrado = listaExtras.get(Identificador);
+		} else {
+			return extraEncontrado = listaExtras.get(0);
 		}
 	}
-	
+
 	public boolean eliminarExtra(Extra extraEliminar) {
 		HashMap<Integer, Extra> listaExtras = leerTodosExtras();
-		if(listaExtras.containsKey(extraEliminar.getIdentificador())){
+		if (listaExtras.containsKey(extraEliminar.getIdentificador())) {
 			listaExtras.remove(extraEliminar.getIdentificador());
 			imprimirTodosExtras(listaExtras);
 			System.out.println("Extra eliminado correctamente");
 			return true;
-		}else {
+		} else {
 			System.err.println("El extra introducido no existe");
 			return false;
 		}

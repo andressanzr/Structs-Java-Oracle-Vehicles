@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Struct;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -25,41 +26,28 @@ public class EmpleadoDAO {
 		ResultSet rs = null;
 		String sql = "SELECT * FROM Empleados";
 		
-		HashMap<String, Camion> listaCamiones = new HashMap<String, Camion>();
-		
 		try{
 			con = DBConnect.conectarBD();
 			stm = con.createStatement();
 			rs = stm.executeQuery(sql);
 			
 			while(rs.next()){
-
-					System.out.println(1);
+				Struct empleadoStruct = (Struct) rs.getObject(2);
+				String nombreUsuario = empleadoStruct.getAttributes()[0].toString();	
+				String passUsuario = empleadoStruct.getAttributes()[1].toString();
+				
+				Empleado empleadoAdd = new Empleado(nombreUsuario, passUsuario);
+				
+				listaEmpleados.put(nombreUsuario, empleadoAdd);
 			}
 			
-			rs.close();
 			stm.close();
 			con.close();
 		}catch(SQLException e){
-			System.err.println("Error SQL CamionDAO ");
+			System.err.println("Error SQL EmpleadoDAO ");
 			e.printStackTrace();
 		}
-		/*
-		try {
-			Scanner in = new Scanner(new FileReader("empleados.txt"));
-			do {
-				in.next();
-				String Usuario = in.next();
-				in.next();
-				String Password = in.next();
-				Empleado empleado1= new Empleado(Usuario, Password);
-
-				listaEmpleados.put(Usuario, empleado1);
-			} while (in.hasNext());
-			in.close();
-		} catch (FileNotFoundException e) {
-			System.err.println("Fichero no encontrado");
-		}*/
+		
 		return listaEmpleados;
 	}
 }

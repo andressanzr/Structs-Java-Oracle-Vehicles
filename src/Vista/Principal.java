@@ -2,579 +2,399 @@ package Vista;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import Modelo.Camion;
+import Modelo.Empleado;
+import Modelo.Extra;
+import Modelo.Turismo;
 
 
 
 class Principal {
-
+	static Scanner in = new Scanner(System.in);
 	public static void main(String[] args) throws ClassNotFoundException, IOException {
-		Camion ca = new Camion();
-		System.out.println(ca.leerTodosCamiones());
-		/*
-		// Cargar los datos
-
-		Scanner sc = new Scanner(System.in);
-		int opcion = 0;
-		// Menú principal
-		do {
-			try {
-				System.out.println("Menú");
-				System.out.println("1. Mostrar todas las personas");
-				System.out.println("2. Buscar una persona");
-				System.out.println("3. Añadir una persona");
-				System.out.println("4. Modificar una persona");
-				System.out.println("5. Eliminar una persona");
-				System.out.println("6. Eliminar todas las personas");
-				System.out.println("7. Mostrar todas las becas");
-				System.out.println("8. Buscar una beca");
-				System.out.println("9. Añadir una beca");
-				System.out.println("10. Modificar una beca");
-				System.out.println("11. Eliminar una beca");
-				System.out.println("12. Eliminar todas las becas");
-				System.out.println("13. Log out");
-				opcion = sc.nextInt();
-
-				switch (opcion) {
-				case 1:
-					mostrarTodos();
-					break;
-				case 2:
-					buscarPersona(sc);
-					break;
-				case 3:
-					añadirPersona(sc);
-					break;
-				case 4:
-					modificarPersona(sc);
-					break;
-				case 5:
-					eliminarPersona(sc);
-					break;
-				case 6:
-					eliminarTodasLasPersonas(sc);
-					break;
-				case 7:
-					mostrarTodasLasBecas();
-					break;
-				case 8:
-					buscarBeca(sc);
-					break;
-				case 9:
-					AñadirBeca(sc);
-					break;
-				case 10:
-					ModificarBeca(sc);
-					break;
-				case 11:
-					eliminarBeca(sc);
-					break;
-				case 12:
-					eliminarTodaLasBecas(sc);
-					break;
-				case 13:
-					System.out.println("Hasta pronto");
-					break;
-				default:
-					System.out.println("Introduce un número de 1 a 13");
-				}
-
-			} catch (InputMismatchException e) {
-				System.err.println("Introduce un número");
-				sc.nextLine();
-			}
-		} while (opcion != 13);
-	}
-
-	public static void eliminarTodaLasBecas(Scanner sc) throws ClassNotFoundException {
-		Beca eliminarTodasBecas = new Beca();
-		eliminarTodasBecas.eliminarTodo();
 		
-	}
+			// declaracion variables
+			String contrasena, usuario;
+			boolean loginCorrecto = false;
+			boolean cerrarSesion = false;
 
-	public static void eliminarBeca(Scanner sc) throws ClassNotFoundException {
-		System.out.println("Indica el Id");
-		int id = sc.nextInt();
-		Beca delBeca= new Beca();
-		delBeca = delBeca.leerBeca(id);
-	
-		if (delBeca != null) {
-			delBeca.eliminar();
-		
-		} else {
-			System.out.printf("No existe la Beca con el Id %d\n", id);
-		}		
-	}
+			// declaracion listas HashMap
+			HashMap<String, Turismo> listaTurismos = new HashMap<String, Turismo>();
+			HashMap<String, Camion> listaCamiones = new HashMap<String, Camion>();
+			HashMap<Integer, Extra> listaExtras = new HashMap<Integer, Extra>();
 
-	public static void ModificarBeca(Scanner sc) throws ClassNotFoundException {
-		Beca modBeca = new Beca();
+			// inicializacion objetos para lectura de datos
+			Camion camionLeer = new Camion();
+			Turismo turismoLeer = new Turismo();
+			Extra extraLeer = new Extra();
 
-		System.out.println("Indica el Id");
-		int id = sc.nextInt();
-		modBeca = modBeca.leerBeca(id);
-		
-
-		if (modBeca != null ) {
-			System.out.println("¿Qué deseas modificar?");
-			System.out.println("1. Id");
-			System.out.println("2. Cuota");
-			System.out.println("3. Descripción");
-			int opcion = sc.nextInt();
-			switch (opcion) {
-			case 1:
-				boolean repetido = false;
-				do {
-					repetido = false;
-					System.out.println("Introduce el nuevo Id");
-					int Id = sc.nextInt();
-					Beca existeBeca= new Beca();
-					existeBeca = existeBeca.leerBeca(Id);
-				
-					if (existeBeca != null) {
-						if (existeBeca.getId()==Id) {
-							System.out.println("Id repetido");
-							repetido = true;
-						} 
-					} else {
-						
-							modBeca.setId(Id);					
-				}
-				} while (repetido);
-				break;
-			case 2:
-				boolean seguir = false;
-				do {
-					seguir = false;
-					try {
-						System.out.println("Introduce la nueva cuota");
-						double cuota = sc.nextDouble();
-							modBeca.setCuota(cuota);
-
-
-					} catch (InputMismatchException e) {
-						System.err.println("Introduzce solo números");
-						sc.nextLine();
-						seguir = true;
-					}
-				} while (seguir);
-				break;
-			case 3:
-				System.out.println("Introduce la descripcion");
-				sc.nextLine();
-				String descripcion = sc.nextLine();
-				modBeca.setDescripción(descripcion);				
-				break;
-			
-		
-				
-
-			}
-			modBeca.actualizar(id);
-		} else {
-			System.out.printf("No existe la beca con el Id %d\n", id);
-
-		}		
-	}
-
-	public static void AñadirBeca(Scanner sc) throws ClassNotFoundException {
-		boolean seguir = false;
-		int id=0;
-		do {
-			seguir = false;
-			System.out.println("Introduzca el id");
-			id = sc.nextInt();
-			Beca existeBeca = new Beca();
-			existeBeca = existeBeca.leerBeca(id);
-			
-			if (existeBeca != null) {
-
-				if (existeBeca.getId()==id) {
-					System.out.println("Id repetido");
-					seguir = true;
-				}
-			}
-		
-		} while (seguir);
-		double cuota = 0.0;
-		do {
-			seguir = false;
-			try {
-				System.out.println("Introduzca la cuota");
-				cuota = sc.nextDouble();
-			} catch (InputMismatchException e) {
-				System.err.println("Introduzce solo números");
-				seguir = true;
-				sc.nextLine();
-			}
-		} while (seguir);
-		System.out.println("Introduzca la descripcion");
-		sc.nextLine();
-		String descripcion = sc.nextLine();
-		
-			Beca newBeca = new Beca(id, cuota, descripcion);
-			newBeca.insertar();
-		}
-		
-	
-
-	public static void buscarBeca(Scanner sc) throws ClassNotFoundException {
-		System.out.println("Indica el id");
-		int id = sc.nextInt();
-		Beca leerBeca = new Beca();
-		leerBeca = leerBeca.leerBeca(id);
-		
-		if (leerBeca != null) {
-			System.out.println(leerBeca.toString());
-		}  else {
-			System.out.printf("No existe la beca con el id %d\n", id);
-		}		
-	}
-
-	public static void mostrarTodasLasBecas() throws ClassNotFoundException {
-		boolean sinPersonas = true;
-		Beca buscarBeca = new Beca();
-		ArrayList<Beca> becas = buscarBeca.leerTodos();
-		for (int i = 0; i < becas.size(); i++) {
-			System.out.println(becas.get(i).toString());
-			sinPersonas = false;
-		}
-		
-		if (sinPersonas) {
-			System.out.println("No existen becas");
-
-		}		
-	}
-
-	public static void eliminarTodasLasPersonas(Scanner sc) throws ClassNotFoundException {
-		Persona eliminarTodasPersonas = new Profesor();
-		eliminarTodasPersonas.eliminarTodo();
-		eliminarTodasPersonas = new Alumno();
-		eliminarTodasPersonas.eliminarTodo();
-	}
-
-	public static void modificarPersona(Scanner sc) throws IOException, ClassNotFoundException {
-		Persona modPersona = new Alumno();
-		Persona modPersona2 = new Profesor();
-
-		System.out.println("Indica el DNI");
-		String DNI = sc.next();
-		modPersona = modPersona.leerPersona(DNI);
-		modPersona2 = modPersona2.leerPersona(DNI);
-
-		if (modPersona != null || modPersona2 != null) {
-			System.out.println("¿Qué deseas modificar?");
-			System.out.println("1. DNI");
-			System.out.println("2. Nombre");
-			System.out.println("3. Apellidos");
-			System.out.println("4. Edad");
-			if (modPersona != null) {
-				System.out.println("5. Beca");
-			}
-			if (modPersona2 != null) {
-				System.out.println("5. Sueldo");
-			}
-			int opcion = sc.nextInt();
-			switch (opcion) {
-			case 1:
-				boolean repetido = false;
-				do {
-					repetido = false;
-					System.out.println("Introduce el nuevo DNI");
-					String dni = sc.next();
-					Persona existePersona = new Alumno();
-					existePersona = existePersona.leerPersona(dni);
-					Persona existePersona2 = new Profesor();
-					existePersona2 = existePersona2.leerPersona(dni);
-					if (existePersona != null) {
-						if (existePersona.getDNI().equals(dni)) {
-							System.out.println("DNI repetido");
-							repetido = true;
-						} else {
-							if (modPersona != null) {
-								modPersona.setDNI(dni);
-							}
-
-						}
-					} else if (existePersona2 != null) {
-						if (existePersona2.getDNI().equals(dni)) {
-							System.out.println("DNI repetido");
-							repetido = true;
-						} else {
-							if (modPersona2 != null) {
-								modPersona2.setDNI(dni);
-							}
-						}
-					} else {
-
-						if (modPersona != null) {
-							modPersona.setDNI(dni);
-						}
-						if (modPersona2 != null) {
-							modPersona2.setDNI(dni);
-						}
-					}
-				} while (repetido);
-				break;
-			case 2:
-				System.out.println("Introduce el nuevo nombre");
-				String nombre = sc.next();
-				modPersona.setNombre(nombre);
-				if (modPersona != null) {
-					modPersona.setNombre(nombre);
-				}
-				if (modPersona2 != null) {
-					modPersona2.setNombre(nombre);
-				}
-				break;
-			case 3:
-				System.out.println("Introduce el nuevo apellido");
-				sc.nextLine();
-				String apellidos = sc.nextLine();
-				if (modPersona != null) {
-					modPersona.setApellidos(apellidos);
-				}
-				if (modPersona2 != null) {
-					modPersona2.setApellidos(apellidos);
-				}
-				break;
-			case 4:
-				boolean seguir = false;
-				do {
-					seguir = false;
-					try {
-						System.out.println("Introduce el nueva edad");
-						int edad = sc.nextInt();
-						if (modPersona != null) {
-							modPersona.setEdad(edad);
-						}
-						if (modPersona2 != null) {
-							modPersona2.setEdad(edad);
-						}
-
-					} catch (InputMismatchException e) {
-						System.err.println("Introduzce solo números");
-						sc.nextLine();
-						seguir = true;
-					}
-				} while (seguir);
-				break;
-			case 5:
-				if (modPersona != null) {
-					seguir = false;
-					do {
-						seguir = false;
-						try {
-							mostrarTodasLasBecas();
-							System.out.println("Introduce el nueva beca");
-							int beca = sc.nextInt();
-							Beca modBeca = new Beca();
-							modBeca=modBeca.leerBeca(beca);
-							if(modBeca==null) {
-								seguir=true;
-								System.out.println("La beca no existe");
-
-							}else {
-							((Alumno) modPersona).setBeca(modBeca);
-							}
-						} catch (InputMismatchException e) {
-							System.err.println("Introduzce solo números");
-							sc.nextLine();
-							seguir = true;
-						}
-					} while (seguir);
-				}
-				if (modPersona2 != null) {
-					seguir = false;
-					do {
-						seguir = false;
-						try {
-							System.out.println("Introduce el nuevo sueldo");
-							double sueldo = sc.nextDouble();
-							((Profesor) modPersona2).setSueldo(sueldo);
-
-						} catch (InputMismatchException e) {
-							System.err.println("Introduzce solo números");
-							sc.nextLine();
-							seguir = true;
-						}
-					} while (seguir);
-				}
-				break;
-
-			}
-			if (modPersona != null) {
-				modPersona.actualizar(DNI);
-
-			} else if (modPersona2 != null) {
-				modPersona2.actualizar(DNI);
-
-			}
-
-		} else {
-			System.out.printf("No existe la persona con el DNI %s\n", DNI);
-
-		}
-
-	}
-
-	public static void eliminarPersona(Scanner sc) throws IOException, ClassNotFoundException {
-		System.out.println("Indica el DNI");
-		String DNI = sc.next();
-		Persona delPersona = new Alumno();
-		delPersona = delPersona.leerPersona(DNI);
-		Persona delPersona2 = new Profesor();
-		delPersona2 = delPersona2.leerPersona(DNI);
-		if (delPersona != null) {
-			delPersona.eliminar();
-		} else if (delPersona2 != null) {
-			delPersona2.eliminar();
-		} else {
-			System.out.printf("No existe la persona con el DNI %s\n", DNI);
-		}
-	}
-
-	public static void añadirPersona(Scanner sc) throws IOException, ClassNotFoundException {
-		boolean seguir = false;
-		String DNI = "";
-		Beca newBeca = new Beca();
-		do {
-			seguir = false;
-			System.out.println("Introduzca el DNI");
-			DNI = sc.next();
-			Persona existePersona = new Alumno();
-			existePersona = existePersona.leerPersona(DNI);
-			Persona existePersona2 = new Profesor();
-			existePersona2 = existePersona2.leerPersona(DNI);
-			if (existePersona != null) {
-
-				if (existePersona.getDNI().equals(DNI)) {
-					System.out.println("DNI repetido");
-					seguir = true;
-				}
-			}
-			existePersona = new Profesor();
-			existePersona = existePersona.leerPersona(DNI);
-			if (existePersona != null) {
-
-				if (existePersona.getDNI().equals(DNI)) {
-					System.out.println("DNI repetido");
-					seguir = true;
-				}
-			}
-		} while (seguir);
-		System.out.println("Introduzca el nombre");
-		String nombre = sc.next();
-		System.out.println("Introduzca el apellido");
-		sc.nextLine();
-		String apellidos = sc.nextLine();
-		int edad = 0;
-		do {
-			seguir = false;
-			try {
-				System.out.println("Introduzca la edad");
-				edad = sc.nextInt();
-			} catch (InputMismatchException e) {
-				System.err.println("Introduzce solo números");
-				seguir = true;
-				sc.nextLine();
-			}
-		} while (seguir);
-		int opcion = 0;
-		do {
-			try {
-				System.out.println("¿Es alumno o profesor?\n1. Alumno\n2. Profesor");
-				opcion = sc.nextInt();
-			} catch (InputMismatchException e) {
-				System.err.println("Introduzce solo números");
-				sc.nextLine();
-			}
-		} while (opcion != 1 && opcion != 2);
-		int beca = 0;
-		if (opcion == 1) {
-
+			// mensaje de bienvenida
+			Scanner sc = new Scanner(System.in);
+			System.out.println("Bienvenido al programa de gestion de vehiculos");
 			do {
-				seguir = false;
-				try {
-					mostrarTodasLasBecas();
-					System.out.println("Introduzca la beca");
-					beca = sc.nextInt();
-					newBeca = new Beca();
-					newBeca=newBeca.leerBeca(beca);
-					if(newBeca==null) {
-						seguir=true;
-						System.out.println("La beca no existe");
+				// bucle login usuario
+				do {
+					System.out.println("Introduzca su usuario:");
+					usuario = in.next();
+					System.out.println("Introduzca su contrasenna:");
+					contrasena = in.next();
+					Empleado empleadoComprobarLogin = new Empleado();
+					loginCorrecto = empleadoComprobarLogin.comprobarLogin(usuario, contrasena);
+					if (loginCorrecto) {
+						System.out.println("Usuario y contrasenna correctos");
 
+					} else {
+						System.err.println("Usuario o contrasenna erroneos");
 					}
-				} catch (InputMismatchException e) {
-					System.err.println("Introduzce solo números");
-					seguir = true;
-					sc.nextLine();
-				}
-			} while (seguir);
-			
-			Persona newPersona = new Alumno(DNI, nombre, apellidos, edad, newBeca);
-			newPersona.insertar();
-			
-		}
-		double sueldo = 0;
-		if (opcion == 2) {
-
-			do {
-				seguir = false;
+				} while (loginCorrecto == false);
+				int opcion = 0;
 				try {
-					System.out.println("Introduzca el sueldo");
-					sueldo = sc.nextDouble();
+					do {
+						cerrarSesion=false;
+						// menu principal
+						System.out.println("Elija que opcion desea realizar.\r\n" + "1.	Mostrar todos los vehiculos.\r\n"
+								+ "2.	Buscar un vehiculo.\r\n" + "3.	Annadir un vehiculo.\r\n"
+								+ "4.	Modificar un vehiculo.\r\n" + "5.	Eliminar un vehiculo.\r\n"
+								+ "6.	Mostrar los extras disponibles.\r\n" + "7.	Annadir un extra.\r\n"
+								+ "8.	Eliminar un extra.\r\n" + "9.	Log out." + "");
+						try {
+							opcion = sc.nextInt();
+						} catch (InputMismatchException e1) {
+							System.err.println("No se pueden introducir letras");
+							sc.nextLine();
+						}
+
+						// switch opcion elegida del menu principal
+						switch (opcion) {
+						case 1:
+							// Mostrar todos los vehiculos
+							listaCamiones = camionLeer.leerTodosCamiones();
+							System.out.println(listaCamiones.toString());
+
+							listaTurismos = turismoLeer.leerTodosTurismos();
+							System.out.println(listaTurismos.toString());
+							break;
+						case 2:
+							// Buscar un vehiculo
+							listaCamiones = camionLeer.leerTodosCamiones();
+							listaTurismos = turismoLeer.leerTodosTurismos();
+							boolean buscarMatriculaOK = false;
+							// bucle matricula correcta
+							do {
+								System.out.println("Introduce la matricula del vehiculo que quieres buscar");
+								String Matricula = sc.next();
+								if (listaCamiones.containsKey(Matricula)) {
+									System.out.println(listaCamiones.get(Matricula));
+									buscarMatriculaOK = true;
+								} else if (listaTurismos.containsKey(Matricula)) {
+									System.out.println(listaTurismos.get(Matricula));
+									buscarMatriculaOK = true;
+								} else {
+									System.err.println("El vehiculo no existe");
+									buscarMatriculaOK = false;
+								}
+							} while (!buscarMatriculaOK);
+							break;
+						case 3:
+							// annadir vehiculo
+							System.out.println("0. Camion\n1. Turismo");
+							int elegir = 9;
+							try {
+								elegir = sc.nextInt();
+							} catch (Exception e1) {
+								System.err.println("No se pueden introducir letras");
+								sc.nextLine();
+							}
+							// caso annadir camion
+							if (elegir == 0) {
+								try {
+									listaCamiones = camionLeer.leerTodosCamiones();
+									System.out.println("Ingresa la nueva matricula");
+									String matricula = sc.next();
+									System.out.println("Ingresa la marca");
+									String marca = sc.next();
+									System.out.println("Ingresa el modelo");
+									String modelo = sc.next();
+									System.out.println("Ingresa el color");
+									String color = sc.next();
+									System.out.println("Ingresa el precio");
+									double precio = sc.nextDouble();
+									System.out.println("Ingresa la capacidad de carga");
+									int capacidadCarga = sc.nextInt();
+									Camion camionAnnadir = new Camion(matricula, marca, modelo, color, precio,
+											capacidadCarga);
+									camionAnnadir.annadirCamion();
+								} catch (InputMismatchException e) {
+									System.err.println("No se pueden introducir letras en la capacidad de carga/precio ");
+								}
+
+								// caso annadir turismo
+							} else if (elegir == 1) {
+								try {
+									listaTurismos = turismoLeer.leerTodosTurismos();
+									listaExtras = extraLeer.leerTodosExtras();
+									Extra extraTurismo;
+									System.out.println("Ingresa la nueva matricula");
+									String matricula = sc.next();
+									System.out.println("Ingresa la marca");
+									String marca = sc.next();
+									System.out.println("Ingresa el modelo");
+									String modelo = sc.next();
+									System.out.println("Ingresa el color");
+									String color = sc.next();
+									System.out.println("Ingresa el precio");
+									double precio = sc.nextDouble();
+									System.out.println("Ingresa el numero de puertas");
+									int numPuertas = sc.nextInt();
+									System.out.println("Ingresa identificador del extra");
+									int extra = sc.nextInt();
+									extraTurismo = extraLeer.buscarExtra(extra);
+
+									Turismo turismoAnnadir = new Turismo(matricula, marca, modelo, color, precio,
+											numPuertas, extraTurismo);
+									turismoAnnadir.annadirTurismo();
+								} catch (InputMismatchException e) {
+									System.err.println("No se pueden introducir letras en el numero de puertas/precio ");
+								}
+							}
+
+							break;
+
+						case 4:
+							// Modificar vehiculo
+							System.out.println("Introduce la matricula del vehiculo que quieres modificar");
+							String matriculaOriginal = sc.next();
+							boolean matriculaOK = false;
+							do {
+								// comprobar que el vehiculo existe
+								if (listaCamiones.containsKey(matriculaOriginal)
+										|| listaTurismos.containsKey(matriculaOriginal)) {
+									int tipo = 0;
+									matriculaOK = true;
+
+									Camion camionModificar = null;
+									Turismo turismoModificar = null;
+									// tipo=1 camion, tipo=2 trusimo
+									try {
+										System.out.println("que quieres modificar");
+										System.out.println("1.Matricula");
+										System.out.println("2.Marca");
+										System.out.println("3.Modelo");
+										System.out.println("4.Color");
+										System.out.println("5.Precio");
+
+										// imprimir en caso que sea camion
+										if (listaCamiones.containsKey(matriculaOriginal)) {
+											System.out.println("6.Capacidad Carga");
+											tipo = 1;
+											camionModificar = listaCamiones.get(matriculaOriginal);
+										}
+										// imprimir en caso que sea turismo
+										if (listaTurismos.containsKey(matriculaOriginal)) {
+											System.out.println("6.Numero de puertas");
+											System.out.println("7.Identificador del extra");
+											tipo = 2;
+											turismoModificar = listaTurismos.get(matriculaOriginal);
+										}
+										// propiedad a cambiar del vehiculo
+										int seleccion = 0;
+										try {
+											seleccion = sc.nextInt();
+										} catch (InputMismatchException e) {
+											System.err.println("No se pueden introducir letras");
+										}
+
+										// inicializacion variables clase vehiculo
+										double precio = 0;
+										String color = null;
+										String matricula = null;
+										String marca = null;
+										String modelo = null;
+
+										// inicializacion variables clase camion
+										int capacidadCarga = 0;
+
+										// inicializacion variables clase turismo
+										int numPuertas = 0;
+										int extra;
+										Extra extraTurismo = null;
+
+										// guardar datos camion
+										if (tipo == 1) {
+											matricula = matriculaOriginal;
+											marca = camionModificar.getMarca();
+											modelo = camionModificar.getModelo();
+											color = camionModificar.getColor();
+											precio = camionModificar.getPrecio();
+											capacidadCarga = camionModificar.getCapacidadCarga();
+										}
+										// guardar datos turismo
+										if (tipo == 2) {
+											matricula = matriculaOriginal;
+											marca = turismoModificar.getMarca();
+											modelo = turismoModificar.getModelo();
+											color = turismoModificar.getColor();
+											precio = turismoModificar.getPrecio();
+											numPuertas = turismoModificar.getNumPuertas();
+											extraTurismo = turismoModificar.getExtras();
+										}
+										// propiedad a cambiar
+										switch (seleccion) {
+										case 1:
+											System.out.println("Ingresa la nueva matricula");
+											matricula = sc.next();
+											break;
+										case 2:
+											System.out.println("Ingresa la marca");
+											marca = sc.next();
+											break;
+										case 3:
+											System.out.println("Ingresa el modelo");
+											modelo = sc.next();
+											break;
+										case 4:
+											System.out.println("Ingresa el color");
+											color = sc.next();
+											break;
+										case 5:
+											System.out.println("Ingresa el precio");
+											precio = sc.nextDouble();
+											break;
+
+										case 6:
+											// caso sea camion
+											if (listaCamiones.containsKey(matriculaOriginal)) {
+												System.out.println("Ingresa la capacidad de carga");
+												capacidadCarga = sc.nextInt();
+											}
+											// caso sea turismo
+											if (listaTurismos.containsKey(matriculaOriginal)) {
+												System.out.println("Ingresa el numero de puertas");
+												numPuertas = sc.nextInt();
+											}
+											break;
+										case 7:
+
+											if (listaTurismos.containsKey(matriculaOriginal)) {
+												System.out.println("Ingresa identificador del extra");
+												extra = sc.nextInt();
+												extraTurismo = extraLeer.buscarExtra(extra);
+											} else {
+												break;
+											}
+											break;
+										}// fin switch
+										if (listaCamiones.containsKey(matriculaOriginal)) {
+											Camion camionModificarFinal = new Camion(matricula, marca, modelo, color,
+													precio, capacidadCarga);
+											camionModificarFinal.modificarCamion(matriculaOriginal);
+										}
+										if (listaTurismos.containsKey(matriculaOriginal)) {
+											Turismo turismoModificarFinal = new Turismo(matricula, marca, modelo, color,
+													precio, numPuertas, extraTurismo);
+											turismoModificarFinal.modificarTurismo(matriculaOriginal);
+										}
+
+									} catch (InputMismatchException e) {
+										System.err.println("No se pueden introducir letras");
+									}
+								} else {
+									System.err.println("La matricula no esta registrada");
+									matriculaOK = false;
+								}
+							} while (!matriculaOK);
+							break;
+						case 5:
+							// eliminar vehiculo
+							listaTurismos = turismoLeer.leerTodosTurismos();
+							listaCamiones = camionLeer.leerTodosCamiones();
+							boolean eliminarVehiculoOK = false;
+							do {
+								System.out.println("Introduce la matricula del vehiculo que quieres eliminar");
+								String matricula = sc.next();
+								Camion camionEliminar = new Camion();
+								Turismo turismoEliminar = new Turismo();
+								if (listaCamiones.containsKey(matricula)) {
+									System.out.println(listaCamiones.get(matricula).toString());
+									camionEliminar = camionEliminar.buscarCamion(matricula);
+									camionEliminar.eliminarCamion();
+									System.out.println("Camion eliminado");
+									eliminarVehiculoOK = true;
+								} else if (listaTurismos.containsKey(matricula)) {
+									System.out.println(listaTurismos.get(matricula).toString());
+									turismoEliminar = turismoEliminar.buscarTurismo(matricula);
+									turismoEliminar.eliminarTurismo();
+									System.out.println("Turismo eliminado");
+									eliminarVehiculoOK = true;
+								} else {
+									System.err.println("La matricula no esta registrada");
+									eliminarVehiculoOK = false;
+								}
+							} while (!eliminarVehiculoOK);
+							break;
+
+						case 6:
+							// leer todos los extras
+							listaExtras = extraLeer.leerTodosExtras();
+							System.out.println(listaExtras.toString());
+							break;
+						case 7:
+							// annadir un nuevo extra
+							listaExtras = extraLeer.leerTodosExtras();
+							boolean annadirOK;
+							try {
+								do {
+									System.out.println("Introduzca el identificador");
+									int identificador = sc.nextInt();
+									System.out.println("Introduzca la descripcion");
+									String descripcion=sc.next();
+									descripcion += sc.nextLine();
+									Extra extraAnnadir = new Extra(identificador, descripcion);
+									annadirOK = extraAnnadir.annadirExtra();
+
+								} while (!annadirOK);
+							} catch (InputMismatchException e) {
+								System.err.println("No se pueden introducir letras en la capacidad de carga ");
+							}
+
+							break;
+						case 8:
+							// eliminar un extra
+							listaExtras = extraLeer.leerTodosExtras();
+							boolean eliminarExtraOK = false;
+							try {
+								do {
+									System.out.println("Introduce el identificador del extra que quieres eliminar");
+									int identificador = sc.nextInt();
+									Extra extraEliminar = extraLeer.buscarExtra(identificador);
+									eliminarExtraOK = extraEliminar.eliminarExtra();
+								} while (!eliminarExtraOK);
+							} catch (InputMismatchException e) {
+								System.err.println("No se pueden introducir letras");
+							}
+
+							break;
+						case 9:
+							// cerrar sesion
+							cerrarSesion = true;
+							loginCorrecto = false;
+
+							System.out.println("Sesion cerrada");
+							break;
+
+						}// fin switch
+
+					} while (!cerrarSesion);
+
 				} catch (InputMismatchException e) {
-					System.err.println("Introduzce solo números");
-					seguir = true;
-					sc.nextLine();
+					e.printStackTrace();
+					System.err.println("No se pueden introducir letras switch");
 				}
-			} while (seguir);
-			Persona newPersona = new Profesor(DNI, nombre, apellidos, edad, sueldo);
-			newPersona.insertar();
-		}
-
-	}
-
-	public static void buscarPersona(Scanner sc) throws ClassNotFoundException {
-		System.out.println("Indica el DNI");
-		String DNI = sc.next();
-		Persona leerPersona = new Alumno();
-		leerPersona = leerPersona.leerPersona(DNI);
-		Persona leerPersona2 = new Profesor();
-		leerPersona2 = leerPersona2.leerPersona(DNI);
-		if (leerPersona != null) {
-			System.out.println(leerPersona.toString());
-		} else if (leerPersona2 != null) {
-			System.out.println(leerPersona2.toString());
-		} else {
-			System.out.printf("No existe la persona con el DNI %s\n", DNI);
-		}
-
-	}
-
-	public static void mostrarTodos() throws ClassNotFoundException {
-		boolean sinPersonas = true;
-		Persona buscarPersona = new Alumno();
-		ArrayList<Persona> personas = buscarPersona.leerTodos();
-		for (int i = 0; i < personas.size(); i++) {
-			System.out.println(personas.get(i).toString());
-			sinPersonas = false;
-		}
-		buscarPersona = new Profesor();
-		personas = buscarPersona.leerTodos();
-		for (int i = 0; i < personas.size(); i++) {
-			System.out.println(personas.get(i).toString());
-			sinPersonas = false;
-		}
-		if (sinPersonas) {
-			System.out.println("No existen personas");
-
-		}
-		*/
-	}
+			} while (cerrarSesion);
+		}// fin main
 
 }

@@ -5,6 +5,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Struct;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -113,24 +118,34 @@ public class TurismoDAO {
 		HashMap<String, Turismo> listaTurismos = new HashMap<String, Turismo>();
 		try {
 			HashMap<Integer, Extra> listaExtras = new HashMap<Integer, Extra>();
+			
+			Connection con =null;
+			Statement stm = null;
+			ResultSet rs = null;
+			
+			String sql = "SELECT * FROM Turismos";
+			
+			con = DBConnect.conectarBD();
+			stm = con.createStatement();
+			
+			rs = stm.executeQuery(sql);
+			
 			ExtraDAO extradao = new ExtraDAO();
 			listaExtras = extradao.leerTodosExtras();
-			Scanner in = new Scanner(new FileReader("turismos.txt"));
-			do {
-				in.next();
-				String Matricula = in.next();
-				in.next();
-				String Marca = in.next();
-				in.next();
-				in.nextLine();
-				String Modelo = in.nextLine();
-				in.next();
-				String Color = in.next();
-				in.next();
-				int numPuertas = in.nextInt();
-				in.next();
-				double Precio = in.nextDouble();
-				in.next();
+
+			while(rs.next()){
+				Struct vehiStruct = (Struct) rs.getObject(2);
+				Object [] vehiAttr = vehiStruct.getAttributes();
+				
+				String matricula= vehiAttr[0].toString();
+				String marca= vehiAttr[1].toString();
+				String modelo= vehiAttr[2].toString();
+				String color= vehiAttr[3].toString();
+				double precio = Double.parseDouble(vehiAttr[4].toString());
+				
+				
+			}
+			
 				int extra = in.nextInt();
 				Extra extraTurismo = null;
 				if (listaExtras.containsKey(extra)) {
@@ -142,7 +157,7 @@ public class TurismoDAO {
 				listaTurismos.put(Matricula, turismoC);
 			} while (in.hasNext());
 			in.close();
-		} catch (FileNotFoundException e) {
+		} catch (SQLException e) {
 			System.err.println("Fichero no encontrado");
 		}
 
