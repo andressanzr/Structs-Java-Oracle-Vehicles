@@ -4,7 +4,7 @@ DB Objects CRUD with Java Command Line and Oracle DB
 
 # Steps for running the App
 
--Create tables and types
--Create triggers
--Create types
--Run src/vista/principal.java
+-Create tables and types<br>
+-Create triggers<br>
+-Create types<br>
+-Run src/vista/principal.java<br>
